@@ -17,15 +17,16 @@
 // reads or writes the corresponding bit in the RAM-resident memory map (1 = black,
 // 0 = white).
 
-(SETCOLOR)
-    // Paint it black
+(CLEAR)
     @color
-    M=-1  // 1111111111111111
+    M=0
 
 (FILL)
-    // row = 0
+    // row = 256
+    @256
+    D=A
     @row
-    M=0
+    M=D
 
     // word = SCREEN
     @SCREEN
@@ -34,12 +35,10 @@
     M=D
 
 (LOOPR)
-    // if row - 255 == 0 then goto END
-    @255
-    D=A
+    // if row == 0 then goto READK
     @row
-    D=M-D
-    @END
+    D=M
+    @READK
     D;JEQ
 
     // block = 32
@@ -83,6 +82,15 @@
     @LOOPR
     0;JMP
 
-(END)
-    @END
+(READK)
+    @KBD
+    D=M
+    @CLEAR
+    D;JEQ
+
+(BLACKEN)
+    // Paint it black
+    @color
+    M=-1  // 1111111111111111
+    @FILL
     0;JMP
